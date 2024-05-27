@@ -148,8 +148,7 @@ const config = {
           return postcssOptions;
         },
       };
-    },
-    "@orama/plugin-docusaurus-v3",
+    }
   ],
   themes: [
     [

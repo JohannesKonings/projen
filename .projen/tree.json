@@ -458,6 +458,19 @@
           "construct": "JsonFile",
           "path": ".projen/tree.json"
         }
+      },
+      "GitlabConfiguration#AutoId31": {
+        "metadata": {
+          "type": "component",
+          "construct": "GitlabConfiguration"
+        }
+      },
+      "YamlFile@.gitlab-ci.yml": {
+        "metadata": {
+          "type": "file",
+          "construct": "YamlFile",
+          "path": ".gitlab-ci.yml"
+        }
       }
     }
   }

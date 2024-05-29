@@ -17,6 +17,7 @@ import {
 } from "./projenrc";
 import { ProjectTree, ReleasableCommits } from "./src";
 import { JsiiProject } from "./src/cdk";
+import { GitlabConfiguration } from "./src/gitlab";
 
 const bootstrapScriptFile = "projen.js";
 
@@ -196,5 +197,36 @@ if (project.defaultTask) {
 }
 
 new ProjectTree(project);
+
+// const gitlab = new GitlabConfiguration(project, {
+const gitlab = new GitlabConfiguration(project, {
+  // default: {
+  //   services: [
+  //     {
+  //       name: "node:latest",
+  //     },
+  //   ],
+  // },
+});
+
+gitlab.addServices(
+  ...[
+    {
+      name: "php:7",
+    },
+  ]
+);
+gitlab.addJobs({
+  build: {
+    stage: "build",
+    services: [
+      {
+        // name: "postgres:11.7",
+        name: "php:7",
+      },
+    ],
+    script: ["echo 'Hello, world!'"],
+  },
+});
 
 project.synth();

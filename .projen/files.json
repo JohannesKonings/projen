@@ -12,6 +12,7 @@
     ".github/workflows/upgrade-bundled-main.yml",
     ".github/workflows/upgrade-main.yml",
     ".gitignore",
+    ".gitlab-ci.yml",
     ".gitpod.yml",
     ".markdownlint.json",
     ".mergify.yml",

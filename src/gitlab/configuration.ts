@@ -104,6 +104,10 @@ export class CiConfiguration extends Component {
    */
   private defaultServices: Service[] = [];
   /**
+   * A list of additional Docker images to run scripts in. The service image is linked to the image specified in the  image parameter.
+   */
+  private services: Service[] = [];
+  /**
    * Used to select a specific runner from the list of all runners that are available for the project.
    */
   readonly defaultTags: string[] = [];
@@ -168,7 +172,7 @@ export class CiConfiguration extends Component {
       this.defaultImage = defaults.image;
       this.defaultInterruptible = defaults.interruptible;
       this.defaultRetry = defaults.retry;
-      defaults.services && this.addServices(...defaults.services);
+      defaults.services && this.addDefaultServices(...defaults.services);
       defaults.tags && this.defaultTags.push(...defaults.tags);
       this.defaultTimeout = defaults.timeout;
     }
@@ -257,18 +261,44 @@ export class CiConfiguration extends Component {
    * @param services The services to add.
    */
   public addServices(...services: Service[]) {
+    if (this.defaultServices.length > 0) {
+      throw new Error(
+        `${this.name}: services is defined in top-level and 'default:' entry.`
+      );
+    }
+    this.addServiceToAttribute(services, this.services);
+  }
+
+  /**
+   * Add additional services to default.
+   * @param defaultServices The services to add.
+   */
+  public addDefaultServices(...defaultServices: Service[]) {
+    if (this.defaultServices.length > 0) {
+      throw new Error(
+        `${this.name}: services is defined in top-level and 'default:' entry.`
+      );
+    }
+    this.addServiceToAttribute(defaultServices, this.defaultServices);
+  }
+
+  private addServiceToAttribute(
+    services: Service[],
+    servicesAttribute: Service[]
+  ) {
+    const existingServices = [...this.services, ...this.defaultServices];
     for (const additional of services) {
-      for (const existing of this.defaultServices) {
+      for (const existing of existingServices) {
         if (
           additional.name === existing.name &&
           additional.alias === existing.alias
         ) {
           throw new Error(
-            `${this.name}: GitLab CI already contains service ${additional}.`
+            `${this.name}: GitLab CI already contains service ${additional.name}.`
           );
         }
       }
-      this.defaultServices.push(additional);
+      servicesAttribute.push(additional);
     }
   }
 
@@ -347,9 +377,7 @@ export class CiConfiguration extends Component {
         this.include.length > 0 ? snakeCaseKeys(this.include) : undefined,
       pages: snakeCaseKeys(this.pages),
       services:
-        this.defaultServices.length > 0
-          ? snakeCaseKeys(this.defaultServices)
-          : undefined,
+        this.services.length > 0 ? snakeCaseKeys(this.services) : undefined,
       variables:
         Object.entries(this.variables).length > 0 ? this.variables : undefined,
       workflow: snakeCaseKeys(this.workflow),

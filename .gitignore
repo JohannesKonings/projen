@@ -63,4 +63,5 @@ tsconfig.json
 !/.markdownlint.json
 !/.vscode/launch.json
 !/.projen/tree.json
+!/.gitlab-ci.yml
 !/.projenrc.ts
